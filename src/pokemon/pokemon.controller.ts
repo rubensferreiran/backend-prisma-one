@@ -12,12 +12,23 @@ import {
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Pokemon } from './entities/pokemon.entity';
 
+@ApiBearerAuth()
+@ApiTags('pokemon')
 @Controller('pokemon')
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Create pokemon' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
   }
@@ -28,8 +39,13 @@ export class PokemonController {
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'The found record',
+    type: Pokemon,
+  })
   findOne(@Param('id') id: string) {
-    return this.pokemonService.findOne(+id);
+    return this.pokemonService.findOne(Number(id));
   }
 
   @Put(':id')
@@ -40,6 +56,6 @@ export class PokemonController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    return this.pokemonService.remove(+id);
+    return this.pokemonService.remove(Number(id));
   }
 }

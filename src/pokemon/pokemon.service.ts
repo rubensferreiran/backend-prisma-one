@@ -14,10 +14,11 @@ export class PokemonService {
     },
   };
   create(data: CreatePokemonDto) {
-    return this.prismaService.pokemon.create({
+    const create = this.prismaService.pokemon.create({
       data,
       include: this._include,
     });
+    return create;
   }
 
   findAll() {
